@@ -1,0 +1,38 @@
+diff -up Date-Manip-5.54/lib/Date/Manip.pm.orig Date-Manip-5.54/lib/Date/Manip.pm
+--- Date-Manip-5.54/lib/Date/Manip.pm.orig	2008-11-26 17:48:15.000000000 +0100
++++ Date-Manip-5.54/lib/Date/Manip.pm	2008-11-26 17:50:10.000000000 +0100
+@@ -3569,6 +3569,7 @@ sub Date_TimeZone {
+             $tz=$ENV{'SYS$TIMEZONE_DIFFERENTIAL'}/3600.; # e.g. '-4' for EDT
+           }
+         }
++        push(@tz,$tz)  if (defined $tz);
+       } else {
+         $tz=`date +%Z 2> /dev/null`;
+         chomp($tz);
+@@ -3577,8 +3578,13 @@ sub Date_TimeZone {
+           chomp($tz);
+           $tz=(split(/\s+/,$tz))[4];
+         }
++        push(@tz,$tz)  if (defined $tz);
++
++        # for international timezones
++        $tz=`date +%z 2> /dev/null`;
++        chomp($tz);
++        push(@tz,$tz)  if (defined $tz);
+       }
+-      push(@tz,$tz)  if (defined $tz);
+     } else {
+       # We need to satisfy taint checking, but also look in all the
+       # directories in @DatePath.
+@@ -3593,6 +3599,11 @@ sub Date_TimeZone {
+ 	$tz=(split(/\s+/,$tz))[4];
+       }
+       push(@tz,$tz)  if (defined $tz);
++
++      # for international timezones
++      $tz=`date +%z 2>  /dev/null`;
++      chomp($tz);
++      push(@tz,$tz)  if (defined $tz);
+     }
+   }
+ 
